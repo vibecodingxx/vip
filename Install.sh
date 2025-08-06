@@ -1,8 +1,8 @@
 #!/bin/bash
-name="$1"
+name="GG"
 domain_input="$2"
 if [[ -z "$name" || -z "$domain_input" ]]; then
-  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <nama> <domain|random>"
+  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
   echo -e "Contoh: Install.sh nama domain"
   exit 1
 fi
@@ -803,8 +803,6 @@ fi
 
 # Terapkan perubahan
 sysctl -p >/dev/null 2>&1
-Banner
-pasang_domain
 Banner
 print_install "Proses Memasang Script Tunneling"
 fun_bar 'instal'
