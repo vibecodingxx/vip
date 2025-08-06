@@ -551,13 +551,7 @@ cd
 apt autoclean -y >/dev/null 2>&1
 apt autoremove -y >/dev/null 2>&1
 print_success "ePro WebSocket Proxy"
-
-clear
-print_install "Menginstall UDP-CUSTOM"
-cd
-rm -rf /root/udp
-mkdir -p /root/udp
-
+} 
 # change to time GMT+7
 echo "change to time GMT+7"
 ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
