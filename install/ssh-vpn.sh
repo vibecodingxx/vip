@@ -4,6 +4,7 @@ MYIP=$(cat /usr/bin/.ipvps)
 export DEBIAN_FRONTEND=noninteractive
 MYIP=$(cat /usr/bin/.ipvps)
 MYIP2="s/xxxxxxxxx/$MYIP/g"
+REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 NET=$(ip -o $ANU -4 route show to default | awk '{print $5}')
 if [[ -f /etc/os-release ]]; then
     . /etc/os-release
