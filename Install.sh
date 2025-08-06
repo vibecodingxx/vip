@@ -204,6 +204,7 @@ sudo systemctl enable chrony --now
 chronyc sourcestats -v
 chronyc tracking -v
 print_success "Packet Yang Dibutuhkan"
+}
 clear
 function pasang_ssl() {
 clear
