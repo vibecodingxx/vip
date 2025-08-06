@@ -1,5 +1,6 @@
 #!/bin/bash
 MYIP=$(cat /usr/bin/.ipvps)
+REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 wget -q -O /usr/bin/limit-ip "${REPO}install/limit-ip"
 chmod +x /usr/bin/*
 cd /usr/bin
