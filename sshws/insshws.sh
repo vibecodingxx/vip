@@ -2,7 +2,7 @@
 MYIP=$(cat /usr/bin/.ipvps)
 
 file_path="/etc/handeling"
-
+REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 # Cek apakah file ada
 if [ ! -f "$file_path" ]; then
     # Jika file tidak ada, buat file dan isi dengan dua baris
