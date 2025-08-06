@@ -1,7 +1,7 @@
 #!/bin/bash
 name="GG"
-domain_input="$2"
-if [[ -z "$name" || -z "$domain_input" ]]; then
+domain_input="$1"
+if [[ -z "$domain_input" ]]; then
   echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
   echo -e "Contoh: Install.sh nama domain"
   exit 1
