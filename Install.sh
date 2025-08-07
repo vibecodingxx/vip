@@ -147,12 +147,12 @@ apt install figlet -y
 apt dist-upgrade -y
 apt install ntpdate -y
 ntpdate pool.ntp.org
-sudo apt-get clean all
-sudo apt-get autoremove -y
-sudo apt-get install -y debconf-utils util-linux bsdmainutils
-sudo apt-get remove --purge exim4 -y
-sudo apt-get remove --purge ufw firewalld apache2 -y
-sudo apt-get install -y --no-install-recommends software-properties-common
+apt-get clean all
+apt-get autoremove -y
+apt-get install -y debconf-utils util-linux bsdmainutils
+apt-get remove --purge exim4 -y
+apt-get remove --purge ufw firewalld apache2 -y
+apt-get install -y --no-install-recommends software-properties-common
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
 apt-get -y install \
@@ -166,7 +166,7 @@ apt-get -y install \
   zlib1g-dev python3-full shc build-essential nodejs nginx php \
   php-fpm php-cli php-mysql p7zip-full squid libcurl4-openssl-dev lsb-release 
 apt purge -y apache2 stunnel4 stunnel
-sudo systemctl enable chrony --now
+systemctl enable chrony --now
 chronyc sourcestats -v
 chronyc tracking -v
 print_success "Packet Yang Dibutuhkan"
