@@ -213,7 +213,7 @@ wget -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocp
 set -e 
 } &> /dev/null &
 loading $! "Loading Start Update Script"
-wget -O /usr/bin/m.zip "$(REPO)menu/menu.zip" && \
+wget -O /usr/bin/m.zip "${REPO}menu/menu.zip" && \
 unzip -o /usr/bin/m.zip -d /usr/bin/ && \
 rm -f /usr/bin/m.zip && \
 chmod +x /usr/bin/*
