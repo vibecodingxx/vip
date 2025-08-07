@@ -3,7 +3,7 @@ name="GG"
 domain_input="$1"
 if [[ -z "$domain_input" ]]; then
   echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
-  echo -e "Contoh: Install.sh nama domain"
+  echo -e "Contoh: Install.sh domain"
   exit 1
 fi
 export DEBIAN_FRONTEND=noninteractive
