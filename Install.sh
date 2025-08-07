@@ -110,6 +110,7 @@ chmod +x /var/log/xray
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
 echo "$domain_input" > /etc/xray/domain
+domain=$(cat /etc/xray/domain)
 mkdir -p /var/lib/kyt >/dev/null 2>&1
 while IFS=":" read -r a b; do
 case $a in
