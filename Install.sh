@@ -188,7 +188,6 @@ chmod +x /root/.acme.sh/acme.sh
 /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
 ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
-
 chmod 777 /etc/xray/xray.key
 print_success "SSL Certificate"
 }
@@ -264,6 +263,7 @@ curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 > /etc/xray/isp
 print_install "Memasang Konfigurasi Packet"
 wget -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg" >/dev/null 2>&1
 wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf" >/dev/null 2>&1
+wget ${REPO}install/ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
 sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
 sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
 curl ${REPO}install/nginx.conf > /etc/nginx/nginx.conf
@@ -767,7 +767,6 @@ fi
 
 # Terapkan perubahan
 sysctl -p >/dev/null 2>&1
-Banner
 print_install "Proses Memasang Script Tunneling"
 instal
 print_success "Script Selesai Dipasang"
