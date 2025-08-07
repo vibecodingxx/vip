@@ -103,7 +103,6 @@ print_error "The current user is not the root user, please switch to the root us
 fi
 }
 print_install "Membuat direktori xray"
-mkdir -p /etc/xray
 touch /etc/xray/domain
 mkdir -p /var/log/xray
 chown www-data.www-data /var/log/xray
@@ -193,7 +192,6 @@ clear
 print_install "Memasang SSL Pada Domain"
 rm -rf /etc/xray/xray.key
 rm -rf /etc/xray/xray.crt
-domain=$(cat /root/domain)
 STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
 [[ -n "$STOPWEBSERVER" ]] && systemctl stop "$STOPWEBSERVER"
 ## crt xray
