@@ -122,6 +122,7 @@ print_error "The current user is not the root user, please switch to the root us
 fi
 }
 print_install "Membuat direktori xray"
+mkdir -p /etc/xray
 touch /etc/xray/domain
 mkdir -p /var/log/xray
 chown www-data.www-data /var/log/xray
@@ -236,7 +237,6 @@ rm -rf /etc/shadowsocks/.shadowsocks.db
 rm -rf /etc/ssh/.ssh.db
 rm -rf /etc/bot/.bot.db
 mkdir -p /etc/bot
-mkdir -p /etc/xray
 mkdir -p /etc/vmess
 mkdir -p /etc/vless
 mkdir -p /etc/trojan
@@ -255,7 +255,7 @@ mkdir -p /etc/limit/trojan
 mkdir -p /etc/limit/ssh
 mkdir -p /etc/github
 chmod +x /var/log/xray
-touch /etc/xray/domain
+touch /etc/xray/
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
 touch /etc/vmess/.vmess.db
