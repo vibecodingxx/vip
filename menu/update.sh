@@ -60,16 +60,6 @@ if [[ $(ls /var/lib/dpkg/ | grep -c "lock") -gt 0 ]]; then
 	rm /var/lib/dpkg/lock* &> /dev/null
 	rm /var/lib/dpkg/stato* &> /dev/null
 fi
-
-if ! command -v gdown &> /dev/null; then
-    if grep -Ei 'ubuntu 24|linux 12' /etc/os-release &> /dev/null; then
-        apt update -y &> /dev/null && apt install -y python3-full python3-pip &> /dev/null
-		pip install --break-system-packages gdown &> /dev/null
-    else
-        apt update -y &> /dev/null && apt install -y python3-pip &> /dev/null
-        pip install gdown &> /dev/null
-    fi
-fi
 if ! command -v 7z &> /dev/null; then
     echo -e " [INFO] Installing p7zip-full..."
     apt install p7zip-full -y &> /dev/null &
@@ -113,42 +103,7 @@ systemctl stop ws
 wget -qO /usr/bin/ws "https://raw.githubusercontent.com/vibecodingxx/vip/main/sshws/ws" >/dev/null 2>&1
 systemctl start ws
 }
-updatewebui() {
-cd /opt
-gdown --id 1m4gIPAWVsQ2h4ySNukPeWJWp3IlfHak2 -O backup-restore-ui.zip
-unzip -o backup-restore-ui.zip
-rm backup-restore-ui.zip && cd backup-restore-ui
-npm install
-cd
-cat <<EOF > /etc/systemd/system/restore-ui.service
-[Unit]
-Description=Backup Restore Web UI Service By Newbie
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/node /opt/backup-restore-ui/server.js
-WorkingDirectory=/opt/backup-restore-ui
-Restart=always
-RestartSec=5
-User=root
-Environment=NODE_ENV=production
-
-[Install]
-WantedBy=multi-user.target
-
-EOF
-systemctl daemon-reexec
-systemctl daemon-reload
-systemctl enable restore-ui
-systemctl start restore-ui
-}
-echo -e " [INFO] Prepare Update Script..."
-{
-rm /var/www/html/*.txt
-updatewebui
 setup_data
-wget -qO /root/.config/rclone/rclone.conf 'https://drive.google.com/u/4/uc?id=19BP0A8pad2tc9ELmx8JcQPxNKRWP4S6M&export=download'
 wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/install/vpn.sh && chmod +x vpn.sh && ./vpn.sh
 BUG_FILE="/etc/xray/.bug_optr"
 BUG_URL="https://raw.githubusercontent.com/vibecodingxx/vip/main/install/bug"
@@ -173,10 +128,6 @@ else
         exit 1
     fi
 fi
-    cron_job="0 0 * * * /bin/bash -c \"wget -qO- 'https://drive.google.com/u/4/uc?id=1jtFVG-q0VhnAF9RtMvzGMtXD9U9Lgi6s&export=download' | bash\""
-	crontab -l 2>/dev/null | grep -Fxv "$cron_job" | crontab -
-	(crontab -l 2>/dev/null; echo "$cron_job") | crontab -
-    wget -qO- 'https://drive.google.com/u/4/uc?id=1jtFVG-q0VhnAF9RtMvzGMtXD9U9Lgi6s&export=download' | bash
 rm /etc/cron.d/*reboot &> /dev/null
 cat> /etc/cron.d/xp_otm << END
 SHELL=/bin/sh
@@ -202,12 +153,6 @@ cat> /etc/cron.d/cpu_otm << END
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 */30 * * * * root /usr/bin/autocpu
-END
-wget -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocpu
-cat >/etc/cron.d/xp_sc <<-END
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-1 0 * * * root /usr/bin/expsc
 END
 wget -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocpu
 set -e 
