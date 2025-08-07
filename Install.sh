@@ -55,11 +55,6 @@ exit 1
 fi
 mkdir -p /etc/xray
 
-if [[ ! "$name" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
-  echo -e "${RED}[ERROR]${NC} Nama tidak valid! Gunakan tanpa spasi atau karakter khusus."
-  exit 1
-fi
-
 # Simpan nama ke file
 echo "$name" > /etc/xray/username
 clear
@@ -68,25 +63,9 @@ green='\e[0;32m'
 NC='\e[0m'
 clear
 rm -f /usr/bin/user
-username=$(curl $IZIN | grep $MYIP | awk '{print $2}')
+username="GG"
 echo "$username" >/usr/bin/user
-expx=$(curl $IZIN | grep $MYIP | awk '{print $3}')
-echo "$expx" >/usr/bin/e
 username=$(cat /usr/bin/user)
-exp=$(cat /usr/bin/e)
-clear
-d1=$(date -d "$valid" +%s)
-d2=$(date -d "$today" +%s)
-certifacate=$(((d1 - d2) / 86400))
-DATE=$(date +'%Y-%m-%d')
-datediff() {
-d1=$(date -d "$1" +%s)
-d2=$(date -d "$2" +%s)
-echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
-}
-mai="datediff "$Exp" "$DATE""
-Info="(${green}Active${NC})"
-Error="(${RED}Expired${NC})"
 today=`date -d "0 days" +"%Y-%m-%d"`
 echo -e "\e[32mloading...\e[0m"
 clear
