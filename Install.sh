@@ -785,7 +785,7 @@ fi
 sysctl -p >/dev/null 2>&1
 Banner
 print_install "Proses Memasang Script Tunneling"
-fun_bar 'instal'
+instal
 print_success "Script Selesai Dipasang"
 echo ""
 history -c
