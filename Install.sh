@@ -22,7 +22,9 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIME=$(date '+%d %b %Y')
+MYIP=$(curl -sS ipv4.icanhazip.com)
 IP_FILE="/usr/bin/.ipvps"
+echo "$MYIP" > /usr/bin/.ipvps
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 Banner
 if [[ $( uname -m | awk '{print $1}' ) == "x86_64" ]]; then
