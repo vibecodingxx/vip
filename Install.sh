@@ -1,9 +1,11 @@
 #!/bin/bash
+LOG_FILE="/root/install_log.txt" 
+exec > >(tee -a ${LOG_FILE}) 2>&1
 name="GG"
 domain_input="$1"
 if [[ -z "$domain_input" ]]; then
   echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
-  echo -e "Contoh: Install.sh domain"
+  echo -e "Contoh: Install.sh nama domain"
   exit 1
 fi
 export DEBIAN_FRONTEND=noninteractive
@@ -26,7 +28,6 @@ MYIP=$(curl -sS ipv4.icanhazip.com)
 IP_FILE="/usr/bin/.ipvps"
 echo "$MYIP" > /usr/bin/.ipvps
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
-Banner
 if [[ $( uname -m | awk '{print $1}' ) == "x86_64" ]]; then
 echo -e "${OK} Your Architecture Is Supported ( ${green}$( uname -m )${NC} )"
 else
@@ -44,7 +45,7 @@ fi
 if [[ $MYIP == "" ]]; then
 echo -e "${EROR} IP Address ( ${RED}Not Detected${NC} )"
 else
-echo -e "${OK} IP Address ( ${green}$IP${NC} )"
+echo -e "${OK} IP Address ( ${green}$MYIP${NC} )"
 fi
 echo ""
 if [ "${EUID}" -ne 0 ]; then
@@ -147,12 +148,12 @@ apt install figlet -y
 apt dist-upgrade -y
 apt install ntpdate -y
 ntpdate pool.ntp.org
-apt-get clean all
-apt-get autoremove -y
-apt-get install -y debconf-utils util-linux bsdmainutils
-apt-get remove --purge exim4 -y
-apt-get remove --purge ufw firewalld apache2 -y
-apt-get install -y --no-install-recommends software-properties-common
+sudo apt-get clean all
+sudo apt-get autoremove -y
+sudo apt-get install -y debconf-utils util-linux bsdmainutils
+sudo apt-get remove --purge exim4 -y
+sudo apt-get remove --purge ufw firewalld apache2 -y
+sudo apt-get install -y --no-install-recommends software-properties-common
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
 apt-get -y install \
@@ -166,7 +167,7 @@ apt-get -y install \
   zlib1g-dev python3-full shc build-essential nodejs nginx php \
   php-fpm php-cli php-mysql p7zip-full squid libcurl4-openssl-dev lsb-release 
 apt purge -y apache2 stunnel4 stunnel
-systemctl enable chrony --now
+sudo systemctl enable chrony --now
 chronyc sourcestats -v
 chronyc tracking -v
 print_success "Packet Yang Dibutuhkan"
@@ -673,7 +674,6 @@ first_setup
 nginx_install
 base_package
 make_folder_xray
-password_default
 pasang_ssl
 install_xray
 ssh
@@ -779,7 +779,6 @@ rm -rf /root/LICENSE
 rm -rf /root/README.md
 rm -rf /root/domain
 rm -rf /root/*.log
-Banner
 secs_to_human "$(($(date +%s) - ${start}))"
 sudo hostnamectl set-hostname $username
 LOCAL_IP="127.0.1.1"
