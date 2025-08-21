@@ -9,18 +9,17 @@ MYIP=$(cat /usr/bin/.ipvps)
 ipsaya=$(curl -sS ipv4.icanhazip.com)
 HOSTNAME=$(hostname)
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
-    NODE_VERSION=$(node -v 2>/dev/null | grep -oP '(?<=v)\d+' || echo "0")
-    rm /var/lib/dpkg/stato*
-    rm /var/lib/dpkg/lock*
+NODE_VERSION=$(node -v 2>/dev/null | grep -oP '(?<=v)\d+' || echo "0")
 
-    if [ "$NODE_VERSION" -lt 22 ]; then
-        echo -e "${yellow}Installing or upgrading Node.js to version 22...${neutral}"
-        curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - || echo -e "${red}Failed to download Node.js setup${neutral}"
-        apt-get install -y nodejs || echo -e "${red}Failed to install Node.js${neutral}"
-        npm install -g npm@latest
-    else
-        echo -e "${green}Node.js is already installed and up-to-date (v$NODE_VERSION), skipping...${neutral}"
-    fi
+if [ "$NODE_VERSION" -lt 22 ]; then
+    echo -e "${yellow}Installing or upgrading Node.js to version 22...${neutral}"
+    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - || { echo -e "${red}Failed to add Node.js repo.${neutral}"; exit 1; }
+    apt-get install -y nodejs || { echo -e "${red}Failed to install Node.js.${neutral}"; exit 1; }
+    npm install -g npm@latest
+    echo -e "${green}Node.js version 22 successfully installed.${neutral}"
+else
+    echo -e "${green}Node.js is already up-to-date (v$NODE_VERSION), skipping...${neutral}"
+fi
 check_and_install_gawk() {
     if ls -l /etc/alternatives/awk | grep -q "/usr/bin/mawk"; then
         echo -e "[INFO] mawk terdeteksi, mengganti ke gawk..."
