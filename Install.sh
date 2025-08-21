@@ -681,7 +681,7 @@ udp_mini
 ins_SSHD
 ins_dropbear
 ins_vnstat
-ins_openvpn
+#ins_openvpn
 ins_backup
 ins_swab
 ins_Fail2ban
@@ -690,7 +690,6 @@ ins_restart
 menu
 profile
 enable_services
-restart_system
 }
 fun_bar() {
     CMD[0]="$1"
