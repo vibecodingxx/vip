@@ -65,52 +65,6 @@ chmod +x /etc/rc.local
 systemctl enable rc-local
 systemctl start rc-local.service
 
-# disable ipv6
-echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
-sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
-# install webserver
-apt -y install nginx php php-fpm php-cli php-mysql libxml-parser-perl
-rm /etc/nginx/sites-enabled/default
-rm /etc/nginx/sites-available/default
-curl ${REPO}install/nginx.conf > /etc/nginx/nginx.conf
-curl ${REPO}install/vps.conf > /etc/nginx/conf.d/vps.conf
-wget -O /etc/haproxy/haproxy.cfg "${REPO}/install/haproxy.cfg"
-wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf"
-sed -i 's/listen = \/var\/run\/php-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php/fpm/pool.d/www.conf
-mkdir -p /home/vps/public_html
-echo "<?php phpinfo() ?>" > /home/vps/public_html/info.php
-chown -R www-data:www-data /home/vps/public_html
-chmod -R g+rw /home/vps/public_html
-cd /home/vps/public_html
-wget -O /home/vps/public_html/index.html "${REPO}install/index.html1"
-
-STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
-[[ -n "$STOPWEBSERVER" ]] && systemctl stop "$STOPWEBSERVER"
-## crt xray
-systemctl stop nginx
-systemctl stop haproxy
-mkdir /root/.acme.sh
-curl https://get.acme.sh | sh -s email=fazligismail@gmail.com
-chmod +x /root/.acme.sh/acme.sh
-/root/.acme.sh/acme.sh --upgrade --auto-upgrade
-/root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
-
-# nginx renew ssl
-#!/bin/bash
-/etc/init.d/nginx stop
-"/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" &> /root/renew_ssl.log
-/etc/init.d/nginx start
-/etc/init.d/nginx status
-' > /usr/local/bin/ssl_renew.sh
-chmod +x /usr/local/bin/ssl_renew.sh
-if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
-
-sed -i 's/xxx/$domain/' /etc/nginx/conf.d/xray.conf
-sed -i 's/xxx/$domain/' /etc/haproxy/haproxy.cfg
-cat /etc/xray/xray.key /etc/xray/xray.crt | tee /etc/haproxy/hap.pem
 # install badvpn
 cd
 wget -O /usr/sbin/badvpn "${REPO}install/badvpn" >/dev/null 2>&1
@@ -135,8 +89,8 @@ sed -i '/Port 22/a Port 22' /etc/ssh/sshd_config
 echo "=== Install Dropbear ==="
 # install dropbear
 apt -y install dropbear
-sudo dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
-sudo chmod 600 /etc/dropbear/dropbear_dss_host_key
+dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
+chmod 600 /etc/dropbear/dropbear_dss_host_key
 wget -O /etc/default/dropbear "${REPO}install/dropbear"
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
@@ -275,8 +229,6 @@ service cron reload >/dev/null 2>&1
 service cron start >/dev/null 2>&1
 chown -R www-data:www-data /home/vps/public_html
 
-rm -f /root/key.pem
-rm -f /root/cert.pem
 rm -f /root/ssh-vpn.sh
 rm -f /root/bbr.sh
 

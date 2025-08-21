@@ -65,7 +65,7 @@ check_dropbear_log() {
 # Fungsi untuk menambahkan konfigurasi dropbear
 add_dropbear_log() {
   echo "Menambahkan konfigurasi Dropbear ke $RSYSLOG_FILE..."
-  sudo bash -c "echo -e 'if \$programname == \"dropbear\" then /var/log/auth.log\n& stop' >> $RSYSLOG_FILE"
+  bash -c "echo -e 'if \$programname == \"dropbear\" then /var/log/auth.log\n& stop' >> $RSYSLOG_FILE"
   systemctl restart rsyslog
   echo "Konfigurasi Dropbear ditambahkan dan Rsyslog direstart."
 }
