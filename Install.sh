@@ -26,7 +26,6 @@ MYIP=$(curl -sS ipv4.icanhazip.com)
 IP_FILE="/usr/bin/.ipvps"
 echo "$MYIP" > /usr/bin/.ipvps
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
-Banner
 if [[ $( uname -m | awk '{print $1}' ) == "x86_64" ]]; then
 echo -e "${OK} Your Architecture Is Supported ( ${green}$( uname -m )${NC} )"
 else
@@ -147,12 +146,12 @@ apt install figlet -y
 apt dist-upgrade -y
 apt install ntpdate -y
 ntpdate pool.ntp.org
-sudo apt-get clean all
-sudo apt-get autoremove -y
-sudo apt-get install -y debconf-utils util-linux bsdmainutils
-sudo apt-get remove --purge exim4 -y
-sudo apt-get remove --purge ufw firewalld apache2 -y
-sudo apt-get install -y --no-install-recommends software-properties-common
+apt-get clean all
+apt-get autoremove -y
+apt-get install -y debconf-utils util-linux bsdmainutils
+apt-get remove --purge exim4 -y
+apt-get remove --purge ufw firewalld apache2 -y
+apt-get install -y --no-install-recommends software-properties-common
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
 apt-get -y install \
@@ -166,7 +165,7 @@ apt-get -y install \
   zlib1g-dev python3-full shc build-essential nodejs nginx php \
   php-fpm php-cli php-mysql p7zip-full squid libcurl4-openssl-dev lsb-release 
 apt purge -y apache2 stunnel4 stunnel
-sudo systemctl enable chrony --now
+systemctl enable chrony --now
 chronyc sourcestats -v
 chronyc tracking -v
 print_success "Packet Yang Dibutuhkan"
@@ -264,6 +263,7 @@ curl -s ipinfo.io/org?token=75082b4831f909  | cut -d " " -f 2-10 > /etc/xray/isp
 print_install "Memasang Konfigurasi Packet"
 wget -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg" >/dev/null 2>&1
 wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf" >/dev/null 2>&1
+wget ${REPO}install/ins-xray.sh && chmod +x ins-xray.sh && ./ins-xray.sh
 sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
 sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
 curl ${REPO}install/nginx.conf > /etc/nginx/nginx.conf
@@ -767,7 +767,6 @@ fi
 
 # Terapkan perubahan
 sysctl -p >/dev/null 2>&1
-Banner
 print_install "Proses Memasang Script Tunneling"
 instal
 print_success "Script Selesai Dipasang"
@@ -780,9 +779,8 @@ rm -rf /root/LICENSE
 rm -rf /root/README.md
 rm -rf /root/domain
 rm -rf /root/*.log
-Banner
 secs_to_human "$(($(date +%s) - ${start}))"
-sudo hostnamectl set-hostname $username
+hostnamectl set-hostname $username
 LOCAL_IP="127.0.1.1"
 if ! grep -q "$username" /etc/hosts; then
     echo "$LOCAL_IP    $username" >> /etc/hosts
