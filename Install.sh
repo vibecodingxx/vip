@@ -104,7 +104,7 @@ fi
 print_install "Membuat direktori xray"
 touch /etc/xray/domain
 mkdir -p /var/log/xray
-chown www-data.www-data /var/log/xray
+chown www-data:www-data /var/log/xray
 chmod +x /var/log/xray
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
@@ -517,7 +517,7 @@ apt autoremove -y >/dev/null 2>&1
 print_success "ePro WebSocket Proxy"
 } 
 # change to time GMT+7
-echo "change to time GMT+7"
+echo "change to time GMT+8"
 ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
 
 function ins_restart(){
@@ -667,6 +667,12 @@ systemctl restart haproxy
 print_success "Enable Service"
 clear
 }
+function watchdog(){
+clear
+print_install "Memasang Watchdog"
+wget ${REPO}install/watchdog.sh && chmod +x watchdog.sh && ./watchdog.sh
+rm watchdog.sh
+}
 function instal(){
 clear
 first_setup
@@ -690,6 +696,7 @@ ins_restart
 menu
 profile
 enable_services
+watchdog
 }
 fun_bar() {
     CMD[0]="$1"
