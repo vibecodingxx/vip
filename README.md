@@ -33,8 +33,7 @@
 - DEBIAN 10 11 12
 
 
-### FITUR TAMBAHAN
-- Lakukan Uji Coba dengan memilih Trial Pada Licensi Key
+### FUTURE TAMBAHAN
 - Tambah Swap 2 GiB
 - Pemasangan yang dinamis
 - Register IP Dari VPS
