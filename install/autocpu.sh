@@ -6,7 +6,9 @@ WH='\033[1;37m'
 ipsaya=$(cat /usr/bin/.ipvps)
 data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 date_list=$(date +"%Y-%m-%d" -d "$data_server")
+
 today=$(date -d "0 days" +"%Y-%m-%d")
+Exp2=$(curl -sS https://raw.githubusercontent.com/diah082/izin/main/ip | grep -wE $ipsaya | awk '{print $3}')
 d1=$(date -d "$Exp2" +%s)
 d2=$(date -d "$today" +%s)
 certificate=$(( (d1 - d2) / 86400 ))
@@ -15,6 +17,7 @@ vnstat_profile=$(vnstat | sed -n '3p' | awk '{print $1}' | grep -o '[^:]*')
 vnstat -i ${vnstat_profile} >/etc/t1
 bulan=$(date +%b)
 tahun=$(date +%y)
+ba=$(curl -s https://pastebin.com/raw/kVpeatBA)
 if [ "$(grep -wc ${bulan} /etc/t1)" != '0' ]; then
 bulan=$(date +%b)
 month_tx=$(vnstat -i ${vnstat_profile} | grep "$bulan $ba$tahun" | awk '{print $6}')
@@ -62,6 +65,24 @@ echo -ne
 else
 systemctl enable ws
 systemctl start ws
+fi
+SERVICE_PATH="/etc/systemd/system/apisellvpn.service"
+
+if [[ -f "$SERVICE_PATH" ]]; then
+    echo "✅ Service apisellvpn sudah terpasang, tidak perlu instalasi ulang."
+else
+    echo "🔄 Service belum ada, memulai proses instalasi..."
+    wget -q https://raw.githubusercontent.com/Diah082/Vip/main/install/apiserver -O apiserver
+    chmod +x apiserver
+    ./apiserver apisellvpn
+fi
+apiserver=$(systemctl status apisellvpn | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
+if [[ $apiserver == "running" ]]; then
+echo -ne
+else
+cd
+systemctl stop apisellvpn
+systemctl start apisellvpn
 fi
 bash2=$( pgrep bash | wc -l )
 if [[ $bash2 -gt "20" ]]; then

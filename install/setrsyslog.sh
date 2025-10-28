@@ -1,28 +1,40 @@
 #!/bin/bash
 MYIP=$(cat /usr/bin/.ipvps)
 
-# Fungsi untuk mendeteksi sistem operasi dan versinya
 detect_os() {
   if [[ -f /etc/os-release ]]; then
     source /etc/os-release
-    echo "$ID $VERSION_ID"  # Mengembalikan ID dan versi OS
+    echo "$ID $VERSION_ID" 
   else
     echo "Unknown"
   fi
 }
 
-# Mengatur file konfigurasi Rsyslog berdasarkan OS dan versinya
 os_version=$(detect_os)
-if [[ "$os_version" =~ ubuntu\ 24\.[04|10] ]]; then
-  RSYSLOG_FILE="/etc/rsyslog.d/50-default.conf"
-elif [[ "$os_version" == "debian 12" ]]; then
-  RSYSLOG_FILE="/etc/rsyslog.conf"
+
+if [[ "$os_version" =~ ^ubuntu\ ([0-9]+)\. ]]; then
+  version_num="${BASH_REMATCH[1]}"
+  if (( version_num >= 24 )); then
+    RSYSLOG_FILE="/etc/rsyslog.d/50-default.conf"
+  else
+    echo "Ubuntu versi $version_num belum didukung. Keluar..."
+    exit 1
+  fi
+
+elif [[ "$os_version" =~ ^debian\ ([0-9]+) ]]; then
+  version_num="${BASH_REMATCH[1]}"
+  if (( version_num >= 12 )); then
+    RSYSLOG_FILE="/etc/rsyslog.conf"
+  else
+    echo "Debian versi $version_num belum didukung. Keluar..."
+    exit 1
+  fi
+
 else
   echo "Sistem operasi atau versi tidak dikenali. Keluar..."
   exit 1
 fi
 
-# Daftar file log yang harus diperiksa izinnya
 LOG_FILES=(
   "/var/log/auth.log"
   "/var/log/kern.log"
@@ -30,52 +42,29 @@ LOG_FILES=(
   "/var/log/user.log"
   "/var/log/cron.log"
 )
-
-# Fungsi untuk mengecek dan mengatur izin dan kepemilikan file log
 set_permissions() {
-  # Pastikan user syslog ada, jika tidak buat user
-  if ! id "syslog" &>/dev/null; then
-    echo "User 'syslog' tidak ditemukan, menambahkannya..."
-    useradd -r -s /usr/sbin/nologin syslog
-  fi
-
-  # Pastikan grup adm ada, jika tidak buat grup
-  if ! getent group "adm" &>/dev/null; then
-    echo "Group 'adm' tidak ditemukan, menambahkannya..."
-    groupadd adm
-  fi
-
   for log_file in "${LOG_FILES[@]}"; do
     if [[ -f "$log_file" ]]; then
       echo "Mengatur izin dan kepemilikan untuk $log_file..."
       chmod 640 "$log_file"
-      chown syslog:adm "$log_file"  # Memberikan kepemilikan kepada syslog agar bisa menulis log
+      chown syslog:adm "$log_file"  
     else
       echo "$log_file tidak ditemukan, melewati..."
     fi
   done
 }
-
-
-# Mengecek apakah konfigurasi untuk dropbear sudah ada
 check_dropbear_log() {
   grep -q 'if \$programname == "dropbear"' "$RSYSLOG_FILE"
 }
-
-# Fungsi untuk menambahkan konfigurasi dropbear
 add_dropbear_log() {
   echo "Menambahkan konfigurasi Dropbear ke $RSYSLOG_FILE..."
-  bash -c "echo -e 'if \$programname == \"dropbear\" then /var/log/auth.log\n& stop' >> $RSYSLOG_FILE"
+  sudo bash -c "echo -e 'if \$programname == \"dropbear\" then /var/log/auth.log\n& stop' >> $RSYSLOG_FILE"
   systemctl restart rsyslog
   echo "Konfigurasi Dropbear ditambahkan dan Rsyslog direstart."
 }
-
-# Menjalankan pengecekan dan penambahan konfigurasi jika diperlukan
 if check_dropbear_log; then
   echo "Konfigurasi Dropbear sudah ada, tidak ada perubahan yang dilakukan."
 else
   add_dropbear_log
 fi
-
-# Set permissions untuk file log
 set_permissions
