@@ -485,15 +485,6 @@ systemctl enable badvpn1 badvpn2 badvpn3
 systemctl start badvpn1 badvpn2 badvpn3
 print_success "files Quota Service"
 }
-function ssh_slow(){
-clear
-print_install "Memasang modul SlowDNS Server"
-wget -q "${REPO}slowdns/installsl.sh" >/dev/null 2>&1
-chmod +x installsl.sh
-./installsl.sh | tee /root/install.log
-clear
-print_success "SlowDNS"
-}
 clear
 function ins_SSHD(){
 clear
@@ -843,7 +834,6 @@ pasang_ssl
 install_xray
 ssh
 udp_mini
-ssh_slow
 ins_SSHD
 ins_dropbear
 ins_vnstat
