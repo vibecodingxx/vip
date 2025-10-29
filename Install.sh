@@ -85,30 +85,6 @@ clear
 rm -f /usr/bin/user
 username=$(curl $IZIN | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
-expx=$(curl $IZIN | grep $MYIP | awk '{print $3}')
-echo "$expx" >/usr/bin/e
-username=$(cat /usr/bin/user)
-exp=$(cat /usr/bin/e)
-clear
-d1=$(date -d "$valid" +%s)
-d2=$(date -d "$today" +%s)
-certifacate=$(((d1 - d2) / 86400))
-DATE=$(date +'%Y-%m-%d')
-datediff() {
-d1=$(date -d "$1" +%s)
-d2=$(date -d "$2" +%s)
-echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
-}
-mai="datediff "$Exp" "$DATE""
-Info="(${green}Active${NC})"
-Error="(${RED}Expired${NC})"
-today=`date -d "0 days" +"%Y-%m-%d"`
-Exp1=$(curl $IZIN | grep -wE "$MYIP" | awk '{print $4}')
-if [[ $today < $Exp1 ]]; then
-sts="${Info}"
-else
-sts="${Error}"
-fi
 echo -e "\e[32mloading...\e[0m"
 clear
 start=$(date +%s)
@@ -486,21 +462,6 @@ systemctl start badvpn1 badvpn2 badvpn3
 print_success "files Quota Service"
 }
 clear
-function ins_SSHD(){
-clear
-print_install "Memasang SSHD"
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 500' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 40000' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 51443' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 58080' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 200' /etc/ssh/sshd_config
-sed -i '/Port 22/a Port 22' /etc/ssh/sshd_config
-echo "Banner /etc/issue.net" >>/etc/ssh/sshd_config
-/etc/init.d/ssh restart
-print_success "SSHD"
-}
-clear
 function ins_dropbear(){
 clear
 print_install "Menginstall Dropbear"
@@ -834,7 +795,6 @@ pasang_ssl
 install_xray
 ssh
 udp_mini
-ins_SSHD
 ins_dropbear
 ins_vnstat
 ins_openvpn
