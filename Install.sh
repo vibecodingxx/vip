@@ -908,8 +908,7 @@ Banner_Newbie
 pasang_domain
 Banner_Newbie
 print_install "Proses Memasang Script Tunneling"
-fun_bar 'instal'
-print_success "Script Selesai Dipasang"
+instal
 echo ""
 history -c
 rm -rf /root/menu
