@@ -83,8 +83,9 @@ green='\e[0;32m'
 NC='\e[0m'
 clear
 rm -f /usr/bin/user
-username=$(curl $IZIN | grep $MYIP | awk '{print $2}')
+username=xx
 echo "$username" >/usr/bin/user
+username=$(cat /usr/bin/user)
 echo -e "\e[32mloading...\e[0m"
 clear
 start=$(date +%s)
@@ -351,8 +352,8 @@ print_success "Konfigurasi Packet"
 function ssh(){
 clear
 print_install "Memasang Password SSH"
-#wget -O /etc/pam.d/common-password "${REPO}install/passwordssh"
-#chmod +x /etc/pam.d/common-password
+wget -O /etc/pam.d/common-password "${REPO}install/passwordssh"
+chmod +x /etc/pam.d/common-password
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure keyboard-configuration
 debconf-set-selections <<<"keyboard-configuration keyboard-configuration/altgr select The default for the keyboard layout"
 debconf-set-selections <<<"keyboard-configuration keyboard-configuration/compose select No compose key"
@@ -393,7 +394,7 @@ END
 chmod +x /etc/rc.local
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-#sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 print_success "Password SSH"
 }
 function udp_mini(){
@@ -460,6 +461,21 @@ systemctl stop badvpn1 badvpn2 badvpn3
 systemctl enable badvpn1 badvpn2 badvpn3
 systemctl start badvpn1 badvpn2 badvpn3
 print_success "files Quota Service"
+}
+clear
+function ins_SSHD(){
+clear
+print_install "Memasang SSHD"
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 500' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 40000' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 51443' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 58080' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 200' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 22' /etc/ssh/sshd_config
+echo "Banner /etc/issue.net" >>/etc/ssh/sshd_config
+/etc/init.d/ssh restart
+print_success "SSHD"
 }
 clear
 function ins_dropbear(){
@@ -795,6 +811,7 @@ pasang_ssl
 install_xray
 ssh
 udp_mini
+ins_SSHD
 ins_dropbear
 ins_vnstat
 ins_openvpn
@@ -868,7 +885,8 @@ Banner_Newbie
 pasang_domain
 Banner_Newbie
 print_install "Proses Memasang Script Tunneling"
-instal
+fun_bar 'instal'
+print_success "Script Selesai Dipasang"
 echo ""
 history -c
 rm -rf /root/menu
