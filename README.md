@@ -25,7 +25,7 @@
 <pre><code>curl -O https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh && bash reinstall.sh Ubuntu 24.04 && reboot</code></pre>
 
 ### INSTALL SCRIPT
-<pre><code>apt update -y && apt install -y wget curl jq && apt install golang-go && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install.sh && chmod +x Install.sh && ./Install.sh 
+<pre><code>apt update -y && apt install -y wget curl jq screen && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/install-handler.sh && chmod +x install-handler.sh && ./install-handler.sh
 </code></pre>
 
 ### TESTED ON OS 
