@@ -8,20 +8,20 @@ NC='\e[0m'
 MYIP=$(cat /usr/bin/.ipvps)
 ipsaya=$(curl -sS ipv4.icanhazip.com)
 HOSTNAME=$(hostname)
-REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
+repo="https://raw.githubusercontent.com/vibecodingxx/vip/main"
+
 NODE_VERSION=$(node -v 2>/dev/null | grep -oP '(?<=v)\d+' || echo "0")
+rm /var/lib/dpkg/stato*
+rm /var/lib/dpkg/lock*
 
 if [ "$NODE_VERSION" -lt 22 ]; then
     echo -e "${yellow}Installing or upgrading Node.js to version 22...${neutral}"
-    # 'sudo -E' dah dibuang dari baris bawah ni
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - || { echo -e "${red}Failed to add Node.js repo.${neutral}"; exit 1; }
-    apt-get install -y nodejs || { echo -e "${red}Failed to install Node.js.${neutral}"; exit 1; }
+    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - || echo -e "${red}Failed to download Node.js setup${neutral}"
+    apt-get install -y nodejs || echo -e "${red}Failed to install Node.js${neutral}"
     npm install -g npm@latest
-    echo -e "${green}Node.js version 22 successfully installed.${neutral}"
 else
-    echo -e "${green}Node.js is already up-to-date (v$NODE_VERSION), skipping...${neutral}"
+    echo -e "${green}Node.js is already installed and up-to-date (v$NODE_VERSION), skipping...${neutral}"
 fi
-
 check_and_install_gawk() {
     if ls -l /etc/alternatives/awk | grep -q "/usr/bin/mawk"; then
         echo -e "[INFO] mawk terdeteksi, mengganti ke gawk..."
@@ -40,8 +40,6 @@ check_and_install_gawk() {
         echo -e "[INFO] awk sudah menggunakan gawk atau kompatibel."
     fi
 }
-
-curl -sS ipv4.icanhazip.com > /usr/bin/.ipvps
 clear
 loading() {
     local pid=$1
@@ -63,7 +61,7 @@ if [[ $(ls /var/lib/dpkg/ | grep -c "lock") -gt 0 ]]; then
 fi
 
 if ! command -v gdown &> /dev/null; then
-    if grep -Ei 'ubuntu 24|linux 12' /etc/os-release &> /dev/null; then
+    if grep -Ei 'ubuntu 24|ubuntu 25|linux 12' /etc/os-release &> /dev/null; then
         apt update -y &> /dev/null && apt install -y python3-full python3-pip &> /dev/null
 		pip install --break-system-packages gdown &> /dev/null
     else
@@ -109,50 +107,37 @@ FILE_IP="/usr/bin/.ipvps"
 if [ ! -f "$FILE_IP" ] || [ ! -s "$FILE_IP" ]; then
 curl -sS ipv4.icanhazip.com > /usr/bin/.ipvps
 fi
+fixcron() {
+cd
+cat > /root/fix.sh << 'EOF'
+#!/bin/bash
+    systemctl stop cron
+    wget -qO /usr/lib/systemd/system/cron.service "$repo/install/cron.service" >/dev/null 2>&1
+    pkill -f /usr/sbin/cron >/dev/null 2>&1
+    pkill -f clearcache >/dev/null 2>&1
+    pkill -f menu >/dev/null 2>&1
+    pkill -f sleep >/dev/null 2>&1
+    systemctl daemon-reexec >/dev/null 2>&1
+    systemctl daemon-reload >/dev/null 2>&1
+    systemctl restart cron >/dev/null 2>&1
+rm -- "$0"
+EOF
+chmod +x fix.sh
+echo "/root/fix.sh" | at now + 5 minute
+}
 Updatews() {
 systemctl stop ws
-wget -qO /usr/bin/ws "https://raw.githubusercontent.com/vibecodingxx/vip/main/sshws/ws" >/dev/null 2>&1
-systemctl start ws
-}
-updatewebui() {
-cd /opt
-gdown --id 1m4gIPAWVsQ2h4ySNukPeWJWp3IlfHak2 -O backup-restore-ui.zip
-unzip -o backup-restore-ui.zip
-rm backup-restore-ui.zip && cd backup-restore-ui
-npm install
-cd
-cat <<EOF > /etc/systemd/system/restore-ui.service
-[Unit]
-Description=Backup Restore Web UI Service By Newbie
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/node /opt/backup-restore-ui/server.js
-WorkingDirectory=/opt/backup-restore-ui
-Restart=always
-RestartSec=5
-User=root
-Environment=NODE_ENV=production
-
-[Install]
-WantedBy=multi-user.target
-
-EOF
-systemctl daemon-reexec
-systemctl daemon-reload
-systemctl enable restore-ui
-systemctl start restore-ui
+wget -qO /usr/bin/ws "$repo/sshws/ws" >/dev/null 2>&1
+systemctl start ws >/dev/null 2>&1
 }
 echo -e " [INFO] Prepare Update Script..."
 {
 rm /var/www/html/*.txt
-updatewebui
 setup_data
 wget -qO /root/.config/rclone/rclone.conf 'https://drive.google.com/u/4/uc?id=19BP0A8pad2tc9ELmx8JcQPxNKRWP4S6M&export=download'
-wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/install/vpn.sh && chmod +x vpn.sh && ./vpn.sh
+wget -q $repo/install/vpn.sh && chmod +x vpn.sh && ./vpn.sh
 BUG_FILE="/etc/xray/.bug_optr"
-BUG_URL="https://raw.githubusercontent.com/vibecodingxx/vip/main/install/bug"
+BUG_URL="$repo/install/bug"
 
 # Cek apakah file ada dan berisi
 if [[ -f $BUG_FILE && -s $BUG_FILE && $(grep -i "=" "$BUG_FILE") ]]; then
@@ -174,10 +159,6 @@ else
         exit 1
     fi
 fi
-    cron_job="0 0 * * * /bin/bash -c \"wget -qO- 'https://drive.google.com/u/4/uc?id=1jtFVG-q0VhnAF9RtMvzGMtXD9U9Lgi6s&export=download' | bash\""
-	crontab -l 2>/dev/null | grep -Fxv "$cron_job" | crontab -
-	(crontab -l 2>/dev/null; echo "$cron_job") | crontab -
-    wget -qO- 'https://drive.google.com/u/4/uc?id=1jtFVG-q0VhnAF9RtMvzGMtXD9U9Lgi6s&export=download' | bash
 rm /etc/cron.d/*reboot &> /dev/null
 cat> /etc/cron.d/xp_otm << END
 SHELL=/bin/sh
@@ -204,23 +185,54 @@ SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 */30 * * * * root /usr/bin/autocpu
 END
-wget -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocpu
+wget -O /usr/bin/autocpu "$repo/install/autocpu.sh" && chmod +x /usr/bin/autocpu
 cat >/etc/cron.d/xp_sc <<-END
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 1 0 * * * root /usr/bin/expsc
 END
-wget -O /usr/bin/autocpu "${REPO}install/autocpu.sh" && chmod +x /usr/bin/autocpu
+wget -O /usr/bin/autocpu "${repo}/install/autocpu.sh" && chmod +x /usr/bin/autocpu
 set -e 
 } &> /dev/null &
 loading $! "Loading Start Update Script"
-wget -O /usr/bin/m.zip "${REPO}menu/menu.zip" && \
-unzip -o /usr/bin/m.zip -d /usr/bin/ && \
-rm -f /usr/bin/m.zip && \
-chmod +x /usr/bin/*
+cd /root
+MAX_RETRY=5
+RETRY_COUNT=0
+MENU_ZIP="menu.zip"
+MENU_DIR="menu"
+GITHUB_URL="$repo/menu/menu.zip" # <-- GANTI DENGAN URL SEBENAR
+
+# Pastikan fail dan direktori dibuang apabila skrip tamat (Cleanup)
+trap 'rm -f "$MENU_ZIP"; rm -rf "$MENU_DIR"' EXIT
+echo " 🔄 Mencoba mengunduh menu.zip dari GitHub..."
+if wget -q -O "$MENU_ZIP" "$GITHUB_URL"; then
+    echo " ✅ Berhasil mengunduh Menu"
+else
+    echo " ❌ Gagal mengunduh menu.zip dari GitHub."
+    exit 1
+fi
+
+if [[ -f "$MENU_ZIP" ]]; then
+    echo " 🔄 Mengekstrak menu.zip..."
+    7z x "$MENU_ZIP" -o"$MENU_DIR" &> /dev/null
+
+    if [[ $? -eq 0 ]]; then
+        echo " ✅ Ekstraksi berhasil, mengatur izin file..."
+        chmod +x "$MENU_DIR"/*
+        mv "$MENU_DIR"/* /usr/bin/
+        echo " ✅ Menu berhasil Diperbarui!"
+    else
+        echo " ❌ Gagal mengekstrak menu.zip! File corrupt."
+        exit 1
+    fi
+else
+    echo " ❌ Gagal mendapatkan menu.zip."
+    exit 1
+fi
+
 echo -e " [INFO] Fetching server version..."
-serverV=$(curl -sS ${REPO}versi)
+serverV=$(curl -sS ${repo}/versi)
 echo $serverV > /opt/.ver
-rm /root/*.sh*  &> /dev/null
+rm -- "$0"
 echo -e " [INFO] File download and Update completed successfully. Version: $serverV!"
 exit
