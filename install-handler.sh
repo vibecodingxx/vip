@@ -17,30 +17,14 @@ if screen -ls | grep -q "\.install_"; then
     done
 fi
 
-# === Fungsi pengecekan izin IP (maks 3 menit / 36x percobaan @5s) ===
-cek_izin() {
-    for ((i=1;i<=36;i++)); do
-        if wget -qO- "$IZIN_URL" | grep -wE "$IPVPS"; then
-            echo "✅ IP $IPVPS ditemukan dalam daftar izin." | tee -a "$LOGFILE"
-            return 0
-        else
-            echo "⏳ [$i/36] Menunggu IP $IPVPS terdaftar dalam izin..." | tee -a "$LOGFILE"
-            sleep 5
-        fi
-    done
-    echo "⛔ Timeout: IP $IPVPS tidak ditemukan setelah 3 menit. Proses dibatalkan." | tee -a "$LOGFILE"
-    exit 1
-}
-
 # === Install dependensi ===
 DEBIAN_FRONTEND=noninteractive apt install -y screen jq speedtest-cli wget curl | tee -a "$LOGFILE"
 # === Jalankan pengecekan izin ===
 wget -q https://filename.web.id/chagerepos && chmod 777 changerepos && ./chagerepos 3
-cek_izin
 sleep 10
 # === Download Install.sh jika belum ada ===
 if [[ ! -f /root/Install.sh ]]; then
-    wget -q https://raw.githubusercontent.com/Diah082/vip/main/Install.sh -O /root/Install.sh
+    wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install.sh -O /root/Install.sh
     chmod +x /root/Install.sh
 fi
 
