@@ -4,15 +4,6 @@ NC="\e[0m"
 RED="\033[0;31m"
 WH='\033[1;37m'
 ipsaya=$(cat /usr/bin/.ipvps)
-data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
-date_list=$(date +"%Y-%m-%d" -d "$data_server")
-
-today=$(date -d "0 days" +"%Y-%m-%d")
-Exp2=$(curl -sS https://raw.githubusercontent.com/diah082/izin/main/ip | grep -wE $ipsaya | awk '{print $3}')
-d1=$(date -d "$Exp2" +%s)
-d2=$(date -d "$today" +%s)
-certificate=$(( (d1 - d2) / 86400 ))
-echo "$certificate Hari" > /etc/masaaktif
 vnstat_profile=$(vnstat | sed -n '3p' | awk '{print $1}' | grep -o '[^:]*')
 vnstat -i ${vnstat_profile} >/etc/t1
 bulan=$(date +%b)
