@@ -1,6 +1,5 @@
 #!/bin/bash
 MYIP=$(cat /usr/bin/.ipvps)
-
 detect_os() {
   if [[ -f /etc/os-release ]]; then
     source /etc/os-release

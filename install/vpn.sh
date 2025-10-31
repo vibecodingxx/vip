@@ -1,12 +1,15 @@
 #!/bin/bash
-# Mod By xx VPN 
+# Mod By NEWBIE VPN 
 
+# By NEWBIE VPN 
+# ==================================================
+# Link Hosting Kalian
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 
 # initialisasi var
 export DEBIAN_FRONTEND=noninteractive
 OS=`uname -m`;
-MYIP=$(curl -s ip.dekaa.my.id);
+MYIP=$(curl -s icanhazip.com);
 ANU=$(ip -o -4 route show to default | awk '{print $5}');
 domain=$(cat /etc/xray/domain)
 # Install OpenVPN dan Easy-RSA

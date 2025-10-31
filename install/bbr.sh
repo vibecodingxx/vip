@@ -1,6 +1,6 @@
 #!/bin/bash
 # Edition : Stable Edition V3.0
-# Auther  : XXX
+# Auther  : NEWBIE STORE
 # (C) Copyright 2023
 # =========================================
 
@@ -18,7 +18,7 @@ clear
 #	 menu
 #else
 
-echo -e "Installing TCP BBR Mod By XXX VPN"
+echo -e "Installing TCP BBR Mod By NEWBIE STORE VPN"
 echo -e "Please Wait BBR Installation Will Starting . . ."
 sleep 5
 clear
@@ -79,16 +79,18 @@ Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.all.forwarding = 1"
 Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.default.forwarding = 1"
 Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.lo.forwarding = 1"
 ################################
-Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.all.disable_ipv6 = 0"
-Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.default.disable_ipv6 = 0"
-Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.lo.disable_ipv6 = 0"
+Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.all.disable_ipv6 = 1"
+Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.default.disable_ipv6 = 1"
+Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.lo.disable_ipv6 = 1"
 ################################
 Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.all.accept_ra = 2"
 Check_And_Add_Line "/etc/sysctl.conf" "net.ipv6.conf.default.accept_ra = 2"
 ################################
 Check_And_Add_Line "/etc/sysctl.conf" "net.core.netdev_budget = 50000"
 Check_And_Add_Line "/etc/sysctl.conf" "net.core.netdev_budget_usecs = 5000"
-Check_And_Add_Line "/etc/sysctl.conf" "#fs.file-max = 51200"
+Check_And_Add_Line "/etc/sysctl.conf" "fs.file-max = 51200"
+Check_And_Add_Line "/etc/sysctl.conf" "net.netfilter.nf_conntrack_max=262144"
+Check_And_Add_Line "/etc/sysctl.conf" "net.netfilter.nf_conntrack_tcp_timeout_time_wait=30"
 Check_And_Add_Line "/etc/sysctl.conf" "net.core.rmem_max = 67108864"
 Check_And_Add_Line "/etc/sysctl.conf" "net.core.wmem_max = 67108864"
 Check_And_Add_Line "/etc/sysctl.conf" "net.core.rmem_default = 67108864"
