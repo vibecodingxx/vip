@@ -30,10 +30,6 @@ organizationalunit=none
 commonname=none
 email=none
 
-# simple password minimal
-curl -sS ${REPO}install/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
-chmod +x /etc/pam.d/common-password
-
 # go to root
 cd
 
@@ -126,7 +122,6 @@ systemctl stop badvpn1 badvpn2 badvpn3
 systemctl enable badvpn1 badvpn2 badvpn3
 systemctl start badvpn1 badvpn2 badvpn3
 cd
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 500' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 40000' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 51443' /etc/ssh/sshd_config
