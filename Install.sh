@@ -25,14 +25,14 @@ green='\e[0;32m'
 TIME=$(date '+%d %b %Y')
 IP_FILE="/usr/bin/.ipvps"
 MYIP=$(curl -s icanhazip.com || curl -s ifconfig.me)
-
+REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
 #
 export GH=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
 export KEY=no
 export KEYBK=no
 export CHATID=no
 export IZIN=https://raw.githubusercontent.com/diah082/izin/main/ip
-export REPO=https://raw.githubusercontent.com/diah082/vip/main/
+#export REPO=https://raw.githubusercontent.com/diah082/vip/main/
 export USERGIT=Diah082
 export EMAILGIT=diahfitriliani9@gmail.com
 export REPIZIN=https://github.com/diah082/izin
