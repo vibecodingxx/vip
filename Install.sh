@@ -387,8 +387,6 @@ print_success "Konfigurasi Packet"
 function ssh(){
 clear
 print_install "Memasang Password SSH"
-wget -O /etc/pam.d/common-password "${REPO}install/passwordssh"
-chmod +x /etc/pam.d/common-password
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure keyboard-configuration
 debconf-set-selections <<<"keyboard-configuration keyboard-configuration/altgr select The default for the keyboard layout"
 debconf-set-selections <<<"keyboard-configuration keyboard-configuration/compose select No compose key"
@@ -429,8 +427,6 @@ END
 chmod +x /etc/rc.local
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
-print_success "Password SSH"
 }
 function udp_mini(){
 clear
@@ -501,7 +497,6 @@ clear
 function ins_SSHD(){
 clear
 print_install "Memasang SSHD"
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 500' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 40000' /etc/ssh/sshd_config
 sed -i '/Port 22/a Port 51443' /etc/ssh/sshd_config
@@ -826,7 +821,6 @@ first_setup
 nginx_install
 base_package
 make_folder_xray
-password_default
 pasang_ssl
 install_xray
 ssh
