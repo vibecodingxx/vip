@@ -1,11 +1,10 @@
 #!/bin/bash
-LOG_FILE="/root/install_log.txt" 
-exec > >(tee -a ${LOG_FILE}) 2>&1
-name="GG"
-domain_input="$1"
-if [[ -z "$domain_input" ]]; then
-  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <domain|random>"
-  echo -e "Contoh: Install.sh nama domain"
+name="$1"
+domain_input="$2"
+if [[ -z "$name" || -z "$domain_input" ]]; then
+  echo -e "${RED}[ERROR]${NC} Penggunaan: $0 <nama> <domain|random>"
+  echo -e "Contoh: Install.sh Newbie_Store random"
+  echo -e "        Install.sh Newbie_Store domainkeren.com"
   exit 1
 fi
 export DEBIAN_FRONTEND=noninteractive
@@ -24,10 +23,35 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIME=$(date '+%d %b %Y')
-MYIP=$(curl -sS ipv4.icanhazip.com)
 IP_FILE="/usr/bin/.ipvps"
-echo "$MYIP" > /usr/bin/.ipvps
-REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"
+MYIP=$(curl -s icanhazip.com || curl -s ifconfig.me)
+
+#
+export GH=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
+export KEY=no
+export KEYBK=no
+export CHATID=no
+export IZIN=https://raw.githubusercontent.com/diah082/izin/main/ip
+export REPO=https://raw.githubusercontent.com/diah082/vip/main/
+export USERGIT=Diah082
+export EMAILGIT=diahfitriliani9@gmail.com
+export REPIZIN=https://github.com/diah082/izin
+export UPIZIN=github.com/diah082/izin
+export CF_KEY=dmckeMyxFwEaTI3ARuY6R8pRoQTsVoteuJj_erdg
+export CF_KEYN=Ky-NmbGbaN33rd30PS_fr6EsyjG85UhObhoOqkvG
+#
+echo "$MYIP" > "$IP_FILE"
+ILLEGAL_FILE="/usr/bin/.ilegal"
+TIMES=10
+if [[ ! -f "$ILLEGAL_FILE" ]]; then
+    echo 0 > "$ILLEGAL_FILE"
+fi
+
+apt upgrade -y
+apt install -y sudo wget curl ncurses-bin lolcat
+gem install lolcat
+
+export IP=$MYIP
 
 function Banner_Newbie {
 clear
@@ -83,9 +107,20 @@ green='\e[0;32m'
 NC='\e[0m'
 clear
 rm -f /usr/bin/user
-username=xx
-echo "$username" >/usr/bin/user
+echo "$name" >/usr/bin/user
 username=$(cat /usr/bin/user)
+DATE=$(date +'%Y-%m-%d')
+datediff() {
+d1=$(date -d "$1" +%s)
+d2=$(date -d "$2" +%s)
+echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
+}
+Info="(${green}Active${NC})"
+Error="(${RED}Expired${NC})"
+today=`date -d "0 days" +"%Y-%m-%d"`
+if true; then
+sts="${Info}"
+fi
 echo -e "\e[32mloading...\e[0m"
 clear
 start=$(date +%s)
@@ -120,7 +155,7 @@ print_error "The current user is not the root user, please switch to the root us
 fi
 }
 print_install "Membuat direktori xray"
-curl -s ip.dekaa.my.id > /etc/xray/ipvps
+curl -s icanhazip.com > /etc/xray/ipvps
 touch /etc/xray/domain
 mkdir -p /var/log/xray
 chown www-data.www-data /var/log/xray
@@ -241,7 +276,7 @@ STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
 systemctl stop nginx
 systemctl stop haproxy
 mkdir /root/.acme.sh
-curl https://get.acme.sh | sh -s email=awanwengi64@gmail.com
+curl https://get.acme.sh | sh -s email=fazligismail@gmail.com
 chmod +x /root/.acme.sh/acme.sh
 /root/.acme.sh/acme.sh --upgrade --auto-upgrade
 /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
@@ -636,20 +671,6 @@ echo enable service udp-custom
 systemctl enable udp-custom &>/dev/null
 print_success "UDP-CUSTOM BY NEWBIE STORE VPN"
 clear
-#print_install "MEMASANG NOOBZVPNS"
-#cd
-#apt install git -y
-#git clone https://github.com/Diah082/noobzvpn.git
-#cd noobzvpn/
-#chmod +x install.sh
-#./install.sh
-
-#echo start service noobzvpns
-#systemctl start noobzvpns &>/dev/null
-
-#echo enable service noobzvpns
-#systemctl enable noobzvpns &>/dev/null
-#print_success "NOOBZVPNS BY NEWBIE STORE"
 }
 function ins_restart(){
 clear
@@ -676,7 +697,6 @@ systemctl enable --now netfilter-persistent
 systemctl enable --now ws
 systemctl enable --now fail2ban
 systemctl enable --now udp-custom
-#systemctl enable --NOW noobzvpns
 history -c
 echo "unset HISTFILE" >> /etc/profile
 cd
@@ -815,6 +835,7 @@ ins_SSHD
 ins_dropbear
 ins_vnstat
 ins_openvpn
+ins_backup
 ins_swab
 ins_Fail2ban
 ins_epro
