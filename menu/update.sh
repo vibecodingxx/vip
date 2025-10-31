@@ -134,7 +134,6 @@ echo -e " [INFO] Prepare Update Script..."
 {
 rm /var/www/html/*.txt
 setup_data
-wget -qO /root/.config/rclone/rclone.conf 'https://drive.google.com/u/4/uc?id=19BP0A8pad2tc9ELmx8JcQPxNKRWP4S6M&export=download'
 wget -q $repo/install/vpn.sh && chmod +x vpn.sh && ./vpn.sh
 BUG_FILE="/etc/xray/.bug_optr"
 BUG_URL="$repo/install/bug"
