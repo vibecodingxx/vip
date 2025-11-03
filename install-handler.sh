@@ -24,7 +24,7 @@ wget -q https://filename.web.id/chagerepos && chmod 777 changerepos && ./chagere
 sleep 10
 # === Download Install.sh jika belum ada ===
 if [[ ! -f /root/Install.sh ]]; then
-    wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install.sh -O /root/Install.sh
+    wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install_secure.sh -O /root/Install.sh
     chmod +x /root/Install.sh
 fi
 
