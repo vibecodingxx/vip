@@ -1,7 +1,7 @@
 #!/bin/bash
-# Mod By NEWBIE VPN 
+# Mod By Beby VPN 
 
-# By NEWBIE VPN 
+# By Beby VPN 
 # ==================================================
 # Link Hosting Kalian
 REPO="https://raw.githubusercontent.com/vibecodingxx/vip/main/"

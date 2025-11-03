@@ -16,11 +16,7 @@ else
     echo "Tidak dapat menentukan sistem operasi."
     exit 1
 fi
-if [[ -e /etc/xray/domain ]]; then
 domain=$(cat /etc/xray/domain)
-else
-domain="newbie.dev"
-fi
 #detail nama perusahaan
 country=ID
 state=Indonesia
@@ -209,7 +205,6 @@ echo; echo -n 'Creating cron to run script every minute.....(Default setting)'
 echo '.....done'
 echo; echo 'Installation has completed.'
 echo 'Config file is at /usr/local/ddos/ddos.conf'
-echo 'Please send in your comments and/or suggestions to https://t.me/newbie_store24'
 echo "Banner /etc/issue.net" >>/etc/ssh/sshd_config
 wget -O /etc/issue.net "${REPO}install/issue.net"
 wget ${REPO}install/bbr.sh && chmod +x bbr.sh && ./bbr.sh

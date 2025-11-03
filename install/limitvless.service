@@ -1,6 +1,6 @@
 [Unit]
 Description=Limit Usage Xray Service
-Documentation=https://t.me/newbie_store242
+Documentation=https://t.me/beby
 After=syslog.target network-online.target
 
 [Service]
