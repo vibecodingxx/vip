@@ -4,6 +4,9 @@
   </a>
 </p>
 
+### INSTALL SCRIPT
+<pre><code>apt update -y && apt install -y wget curl jq golang-go && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install-secure.sh && chmod +x Install-secure.sh && ./Install-secure.sh</code></pre>
+
 ### CLEAR INSTALLER SCRIPT IN YOUR VPS THANKS FOR BIN456789
 ### rebuild deb 10 selain do
 
@@ -23,10 +26,6 @@
 ### rebuild ubuntu 24
 
 <pre><code>curl -O https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh && bash reinstall.sh Ubuntu 24.04 && reboot</code></pre>
-
-### INSTALL SCRIPT
-<pre><code>apt update -y && apt install -y wget curl jq screen && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/install-handler.sh && chmod +x install-handler.sh && ./install-handler.sh
-</code></pre>
 
 ### TESTED ON OS 
 - UBUNTU 20.04 22 24.04 24.10
