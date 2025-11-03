@@ -5,7 +5,7 @@
 </p>
 
 ### INSTALL SCRIPT
-<pre><code>apt update -y && apt install -y wget curl jq golang-go && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install-secure.sh && chmod +x Install-secure.sh && ./Install-secure.sh</code></pre>
+<pre><code>apt update -y && apt install -y wget curl jq golang-go && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install_secure.sh && chmod +x Install_secure.sh && ./Install_secure.sh</code></pre>
 
 ### CLEAR INSTALLER SCRIPT IN YOUR VPS THANKS FOR BIN456789
 ### rebuild deb 10 selain do
