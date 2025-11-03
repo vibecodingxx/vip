@@ -3,7 +3,6 @@
 NAMA=$1
 DOMAIN=$2
 LOGFILE="/root/log_install_${NAMA}.log"
-IZIN_URL="https://raw.githubusercontent.com/Diah082/izin/main/ip"
 IPVPS=$(curl -s https://ipv4.icanhazip.com)
 SCREEN_NAME="install_${NAMA}"
 
