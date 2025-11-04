@@ -5,7 +5,7 @@
   
 </p>
 <p align="center">
-  <img src="https://media.gifdb.com/sexy-anime-blingee-anime-cat-girl-qa3vurp3ay2k1218.gif" alt="x" width="500"/>
+  <img src="https://gifdb.com/images/high/sexy-anime-blingee-anime-cat-girl-qa3vurp3ay2k1218.webp" alt="x" width="500"/>
 </p>
 
 ### INSTALL SCRIPT
