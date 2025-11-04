@@ -3,6 +3,9 @@
     <img src="https://readme-typing-svg.demolab.com?font=Capriola&size=40&duration=4000&pause=450&color=F70069&background=FFFFAA00&center=true&random=false&width=600&height=100&lines=BEBY+XXX+AUTOSCRIPT+!;Explore+the+best+HOLE!" alt="Typing SVG" />
   </a>
 </p>
+<p align="center">
+  <img src="https://media.gifdb.com/sexy-anime-blingee-anime-cat-girl-qa3vurp3ay2k1218.gif" alt="x" width="500"/>
+</p>
 
 ### INSTALL SCRIPT
 <pre><code>apt update -y && apt install -y wget curl jq golang-go && wget -q https://raw.githubusercontent.com/vibecodingxx/vip/main/Install.sh && chmod +x Install.sh && ./Install.sh</code></pre>
